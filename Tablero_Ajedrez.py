@@ -3,13 +3,13 @@
 
 #Constantes del tablero
 TAMAÑO_TABLERO: int = 8
-LETRAS_VALIDAS: str = ("abcdefg")
-NUMEROS_VALIDOS: int = (12345678)
+LETRAS_VALIDAS: str = ("abcdefgh")
+NUMEROS_VALIDOS: str = ("12345678")
 
 #Posición de las piezas
 TABLERO_SIMBOLOS: list[list[str]] = [ #Asignando los símbolos por listas dentro de listas
     ["\u265C","\u265E","\u265D","\u265B","\u265A","\u265D","\u265E","\u265C"], #Símbolos de la fila 8
-    ["\u265F","\u265F","\265F","\u265F","\u265F","\u265F","\u265F","\u265F"], #Símbolos de la fila 7
+    ["\u265F","\u265F","\u265F","\u265F","\u265F","\u265F","\u265F","\u265F"], #Símbolos de la fila 7
     [" . "," . "," . "," . "," . "," . "," . "," . "], #Símbolos de la fila 6
     [" . "," . "," . "," . "," . "," . "," . "," . "], #Símbolos de la fila 5
     [" . "," . "," . "," . "," . "," . "," . "," . "], #Símbolos de la fila 4
