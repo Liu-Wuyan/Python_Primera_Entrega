@@ -63,8 +63,56 @@ print("Introduzca una casilla (por ejemplo e2) o salir para terminar")
 print(" ")
 
 
-""" Máquina de estados, la máquina de estados servirá para alternar los turnos de blancas y negras y jaque finalizar la partida """
+""" Máquina de estados, la máquina de estados servirá para alternar los turnos de blancas y negras o finalizar la partida """
 
+
+# --- ESTADO INICIAL DEL JUEGO ---
+
+turno_actual: str = "turno_blancas"
+
+while turno_actual != "salir" or "Salir" or "SALIR":
+
+    if turno_actual == "turno_blancas":
+        print("Turno de las blancas")
+        casilla: str = input("Introduzca casilla (sin espacios ej:a2): ") #Muestra "Turno de las blancas"  y también un input()
+
+        if casilla == "Salir" or casilla == "Salir" or casilla == "SALIR":
+            turno_actual: str = "salir" #Terminaría, porque rompe con la condición del bucle while
+        elif len(casilla) == 2 and casilla[0] in LETRAS_VALIDAS and casilla[1] in NUMEROS_VALIDOS: 
+            letra_columna: str = casilla[0]
+            columna: int = 0 #Creación de la variable
+            if letra_columna == "a": #Comparación y traducción
+               columna: int = 0 #Procesa el dato
+            elif letra_columna == "b":
+               columna: int = 1
+            elif letra_columna == "c":
+               columna: int = 2
+            elif letra_columna == "d":
+                columna: int = 3
+            elif letra_columna == "e":
+                columna: int = 4
+            elif letra_columna == "f":
+                columna: int = 5
+            elif letra_columna == "g":
+                columna: int = 6
+            elif letra_columna == "h":
+                columna: int = 7
+
+            fila_tablero: int = DIMENSION_TABLERO - int(casilla[1]) #Convierte el número introducido en el orden que tiene Python, ej: 2 es 8-2 = fila 6
+            nombre_pieza: str = TABLERO_NOMBRES[fila_tablero][columna] #Con las dos coordenadas calculadas se puede consultar la matriz
+
+            if nombre_pieza != "":
+                print(f"En la casilla {casilla} hay: {nombre_pieza} ")
+            else:
+                print(f"La casilla {casilla} se encuentra vacía")
+
+            turno_actual: str = "turno_negras" #Si ha sido un éxito, el turno cambiará a las negras
+
+        else:
+            print("Casilla no válida, por favor introduzca una casilla ") #Si la casilla introducina no es correcta, no cambiamos de turno
+
+            
+            
 
 
 
