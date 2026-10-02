@@ -74,7 +74,7 @@ while turno_actual != "salir" or "Salir" or "SALIR":
 
     if turno_actual == "turno_blancas":
         print("Turno de las blancas")
-        casilla: str = input("Introduzca casilla (sin espacios ej:a2): ") #Muestra "Turno de las blancas"  y también un input()
+        casilla: str = input("Introduzca casilla (sin espacios ej:a2, y en minúscula): ") #Muestra "Turno de las blancas"  y también un input()
 
         if casilla == "Salir" or casilla == "Salir" or casilla == "SALIR":
             turno_actual: str = "salir" #Terminaría, porque rompe con la condición del bucle while
@@ -109,11 +109,43 @@ while turno_actual != "salir" or "Salir" or "SALIR":
             turno_actual: str = "turno_negras" #Si ha sido un éxito, el turno cambiará a las negras
 
         else:
-            print("Casilla no válida, por favor introduzca una casilla ") #Si la casilla introducina no es correcta, no cambiamos de turno
+            print("Casilla no válida, por favor introduzca una casilla válida") #Si la casilla introducina no es correcta, no cambiamos de turno
 
-            
-            
+    elif turno_actual == "turno_negras":
+        print("Turno de las negras")
+        casilla: str = input("Introduzca casilla (sin espacios ej:a2, y en minúscula): ")
 
+        if casilla == "Salir" or casilla == "Salir" or casilla == "SALIR":
+            turno_actual: str = "salir" 
+        elif len(casilla) == 2 and casilla[0] in LETRAS_VALIDAS and casilla[1] in NUMEROS_VALIDOS: 
+            letra_columna: str = casilla[0]
+            columna: int = 0 
+            if letra_columna == "a": 
+               columna: int = 0 
+            elif letra_columna == "b":
+               columna: int = 1
+            elif letra_columna == "c":
+               columna: int = 2
+            elif letra_columna == "d":
+                columna: int = 3
+            elif letra_columna == "e":
+                columna: int = 4
+            elif letra_columna == "f":
+                columna: int = 5
+            elif letra_columna == "g":
+                columna: int = 6
+            elif letra_columna == "h":
+                columna: int = 7
 
+            fila_tablero: int = DIMENSION_TABLERO - int(casilla[1])
+            nombre_pieza: str = TABLERO_NOMBRES[fila_tablero][columna] 
 
+            if nombre_pieza != "":
+                print(f"En la casilla {casilla} hay: {nombre_pieza} ")
+            else:
+                print(f"La casilla {casilla} se encuentra vacía")
 
+            turno_actual: str = "turno_blancas" #La variable turno_actual cambia de turno_negras a turno_blancas
+
+        else:
+            print("Casilla no válida, por favor introduzca una casilla válida ") 
