@@ -111,7 +111,7 @@ while turno_actual != "salir":
             turno_actual: str = "turno_negras" #Si ha sido un éxito, el turno cambiará a las negras
 
         else:
-            print("Casilla no válida, por favor introduzca una casilla válida") #Si la casilla introducina no es correcta, no cambiamos de turno
+            print("Casilla no válida, por favor introduzca una casilla válida o introduzca salir, para terminar la partida") #Si la casilla introducina no es correcta, no cambiamos de turno
 
     elif turno_actual == "turno_negras":
         print("Turno de las negras")
