@@ -17,6 +17,7 @@ TABLERO_SIMBOLOS: list[list[str]] = [ #Asignando los símbolos por listas dentro
     ["\u265F","\u265F","\u265F","\u265F","\u265F","\u265F","\u265F","\u265F"], #Símbolos de la fila 7
     ["","","","","","","",""], #Símbolos de la fila 6
     ["","","","","","","",""], #Símbolos de la fila 5
+    ["","","","","","","",""], #Símbolos de la fila 4
     ["","","","","","","",""], #Símbolos de la fila 3
     ["\u2659","\u2659","\u2659","\u2659","\u2659","\u2659","\u2659","\u2659"], #Símbolos de la fila 2
     ["\u2656","\u2658","\u2657","\u2655","\u2654","\u2657","\u2658","\u2656"] #Símbolos de la fila 1
@@ -31,7 +32,7 @@ TABLERO_NOMBRES: list[list[str]] = [
     ["","","","","","","",""],
     ["","","","","","","",""],
     ["","","","","","","",""],
-    ["Peón_Blaco","Peón_Blaco","Peón_Blaco","Peón_Blaco","Peón_Blaco","Peón_Blaco","Peón_Blaco","Peón_Blaco"],
+    ["Peón_Blanco","Peón_Blanco","Peón_Blanco","Peón_Blanco","Peón_Blanco","Peón_Blanco","Peón_Blanco","Peón_Blanco"],
     ["Torre_blanca","Caballo_blanco","Alfil_blanco","Dama_blanca","Rey_blanco","Alfil_blanco","Caballo_blanco","Torre_blanca"]
 ]
 
@@ -44,7 +45,7 @@ encabezado: str = "  "
 for indice_columna in range(DIMENSION_TABLERO): #Bucle que recorrerá las 8 columnas
     letra_columna: str = LETRAS_VALIDAS[indice_columna] #Se busca en LETRAS_VALIDAS las letras que corresponden con las posiciones
     encabezado: str = encabezado + " " + letra_columna + " " #Lo que estaba acumulado en el encabezado, un espacio, la letra que corresponida a la posición y otro espacio
-print(encabezado) #Muestra el encabezado
+print(encabezado) #Muestra el encabezad
 
 for indice_fila in range(DIMENSION_TABLERO): #Recorre de arriba abajo las filas
     numero_fila: int = DIMENSION_TABLERO - indice_fila #Orden del 8 al 1 restando 8-0=8,siguiente bucle 8-1=7,...etc. 
@@ -59,9 +60,10 @@ for indice_fila in range(DIMENSION_TABLERO): #Recorre de arriba abajo las filas
     print(linea)
 #instrucciones finales después de imprimir la tabla de ajedrez
 print(" ") #Espacio visual
-print("Introduzca una casilla (por ejemplo e2) o salir para terminar") 
+print("Por cada turno podrá introducir una casilla, válida, para consultar") 
 print(" ")
-
+print("¡Que empiece la partida!")
+print(" ")
 
 """ Máquina de estados, la máquina de estados servirá para alternar los turnos de blancas y negras o finalizar la partida """
 
@@ -70,13 +72,13 @@ print(" ")
 
 turno_actual: str = "turno_blancas"
 
-while turno_actual != "salir" or "Salir" or "SALIR":
+while turno_actual != "salir":
 
     if turno_actual == "turno_blancas":
         print("Turno de las blancas")
-        casilla: str = input("Introduzca casilla (sin espacios ej:a2, y en minúscula): ") #Muestra "Turno de las blancas"  y también un input()
+        casilla: str = input("Introduzca casilla (sin espacios ej:a2, sin espacios y en minúscula) o salir, para terminar el juego: ") #Muestra "Turno de las blancas"  y también un input()
 
-        if casilla == "Salir" or casilla == "Salir" or casilla == "SALIR":
+        if casilla == "salir":
             turno_actual: str = "salir" #Terminaría, porque rompe con la condición del bucle while
         elif len(casilla) == 2 and casilla[0] in LETRAS_VALIDAS and casilla[1] in NUMEROS_VALIDOS: 
             letra_columna: str = casilla[0]
@@ -113,9 +115,9 @@ while turno_actual != "salir" or "Salir" or "SALIR":
 
     elif turno_actual == "turno_negras":
         print("Turno de las negras")
-        casilla: str = input("Introduzca casilla (sin espacios ej:a2, y en minúscula): ")
+        casilla: str = input("Introduzca casilla (sin espacios ej:a2, y en minúscula) o salir para terminar la partida: ")
 
-        if casilla == "Salir" or casilla == "Salir" or casilla == "SALIR":
+        if casilla == "salir":
             turno_actual: str = "salir" 
         elif len(casilla) == 2 and casilla[0] in LETRAS_VALIDAS and casilla[1] in NUMEROS_VALIDOS: 
             letra_columna: str = casilla[0]
@@ -148,4 +150,4 @@ while turno_actual != "salir" or "Salir" or "SALIR":
             turno_actual: str = "turno_blancas" #La variable turno_actual cambia de turno_negras a turno_blancas
 
         else:
-            print("Casilla no válida, por favor introduzca una casilla válida ") 
+            print("Casilla no válida, por favor introduzca una casilla válida o introduzca salir para terminar la partida ") 
