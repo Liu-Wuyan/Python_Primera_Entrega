@@ -172,23 +172,22 @@ tablero.colocar(Peon("negro"),1 ,6)
 tablero.colocar(Peon("negro"),1 ,7)
 
 #Piezas blancas
-tablero.colocar(Torre("blanca"), 0, 0)
-tablero.colocar(Caballo("blanco"), 0, 1)
-tablero.colocar(Alfil("blanco"), 0, 2)
-tablero.colocar(Rey("blanco"), 0, 3)
-tablero.colocar(Dama("blanca"),0 ,4)
-tablero.colocar(Alfil("blanco"),0 ,5)
-tablero.colocar(Caballo("blanco"),0 ,6)
-tablero.colocar(Torre("blanco"),0 ,7)
-tablero.colocar(Peon("blanco"),1 ,0)
-tablero.colocar(Peon("blanco"),1 ,1)
-tablero.colocar(Peon("blanco"),1 ,2)
-tablero.colocar(Peon("blanco"),1 ,3)
-tablero.colocar(Peon("blanco"),1 ,4)
-tablero.colocar(Peon("blanco"),1 ,5)
-tablero.colocar(Peon("blanco"),1 ,6)
-tablero.colocar(Peon("blanco"),1 ,7)
-
+tablero.colocar(Torre("blanca"), 7, 0)
+tablero.colocar(Caballo("blanco"), 7, 1)
+tablero.colocar(Alfil("blanco"), 7, 2)
+tablero.colocar(Rey("blanco"), 7, 3)
+tablero.colocar(Dama("blanca"),7 ,4)
+tablero.colocar(Alfil("blanco"),7 ,5)
+tablero.colocar(Caballo("blanco"),7 ,6)
+tablero.colocar(Torre("blanco"),7 ,7)
+tablero.colocar(Peon("blanco"),6 ,0)
+tablero.colocar(Peon("blanco"),6 ,1)
+tablero.colocar(Peon("blanco"),6 ,2)
+tablero.colocar(Peon("blanco"),6 ,3)
+tablero.colocar(Peon("blanco"),6 ,4)
+tablero.colocar(Peon("blanco"),6 ,5)
+tablero.colocar(Peon("blanco"),6 ,6)
+tablero.colocar(Peon("blanco"),6 ,7)
 tablero.imprimir()
 
 
@@ -203,59 +202,4 @@ tablero.imprimir()
 
 
    
-
-#Función de validación
-#def es_casilla_valida(casilla: str)-> bool:
-   #return len(casilla) == 2 and casilla[0] in LETRAS_VALIDAS and casilla[1] in NUMEROS_VALIDOS
-#Esta función sustituye la línea de código que consultaba si la casilla inroducida era válida o no
-
-
-
-   
-#Función de conversión
-
-
-
-#Añadir buena presentación en terminal
-
-#generar datos
-
-#movimiento
-
-#recibe imput
-#mirar la pieza,¿está en la casilla?,luego ver si cumple la condición (anteriormente he puesto la condicion de commo se puede mover)
-#si cumple, ir a la matriz y elimar la pieza,ponerla en la posición nueva
-#casilla origen casilla final,ej, torre no diagonal, no si hay ota pieza en el camino
-
-#si peón blanco fila ,, convertir a reina
-
-#clases PIEZA ,dentro de piezas hay tipos y colores,
-#movimiento valido, el truno en que está
-#deteción del jaque al rey, ver la tabla y ver si alguna pieza puede hacer jaque
-
-#guardar memoria, ejecuta #movimiento guardar en un archivo .txt 
-
-#posiblidad de retomar partida 
-#mover sin reglas=poder mover antes de seguir las condiciones
-
-#dentro de algunos , movimiento valido() 
-
-#No visualización gráfica requerida
-
-#No dejar que se mueva otra pieza al detectar jaque
-#movimeinto no valido si mueves el rey y sique en jaque
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
