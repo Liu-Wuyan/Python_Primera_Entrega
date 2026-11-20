@@ -63,7 +63,7 @@ class Torre(Pieza):
         super().__init__(color, simbolo)
 
 
-    def es_movimiento_valido(self, origen: tuple[int,int], destino: tuple[int,int], tablero) -> bool:
+    def movimiento_valido(self, origen: tuple[int,int], destino: tuple[int,int], tablero) -> bool:
        return (((origen [0] == destino [0]) != (origen [1] == destino [1]) and (origen != destino)) and self.camino_libre(origen, destino, tablero))
 
     
@@ -93,7 +93,7 @@ class Caballo(Pieza):
         super().__init__(color, simbolo)
 
 
-    def movimiento_valido(self, origen: tuple[int,int], destino: tuple[int,int]) -> bool:
+    def movimiento_valido(self, origen: tuple[int,int], destino: tuple[int,int], tablero=None) -> bool:
         return ((abs(origen[0] - destino[0]) == 2 and abs(origen[1] - destino[1]) == 1) or (abs(origen[0] - destino[0]) == 1
                 and abs(origen[1] - destino[1]) == 2))
 
@@ -117,13 +117,13 @@ class Peon(Pieza):
             direccion = 1
             fila_inicial = 1
 
-            pieza_destino = tablero.casillas[destino[0]][destino[1]]
+        pieza_destino = tablero.casillas[destino[0]][destino[1]]
 
-        return (((destino[0] - origen[0] == direccion and origen[1] == destino[1] and pieza_destino is None) #avanzar casilla a casilla
-                or (origen[0] == fila_inicial and destino[0] - origen[0] == (direccion * 2) and origen[1] == destino[1] and pieza_destino is None) #avanzar dos casillas si está en posición inicial
-                or (destino[0] - origen[0] == direccion and abs(origen[1] - destino[1] == 1) and pieza_destino is not None and pieza_destino.color != self.color)) #casilla en diagonal
-                #para la daigonal, el peón se mueve una casilla adelante, una casilla an la columna(derecha o izquerda) y en la csilla de destino debe haver una pieza enemiga
-                and self.camino_libre(origen, destino, tablero))
+        avanzar_uno = (destino[0] - origen[0] == direccion and origen[1] == destino[1] and pieza_destino is None) #avanzar casilla a casilla
+        avanzar_dos = (origen[0] == fila_inicial and destino[0] - origen[0] == (direccion * 2) and origen[1] == destino[1] and pieza_destino is None) #avanzar dos casillas si está en posición inicial
+        avanzar_diagonal = (destino[0] - origen[0] == direccion and abs(origen[1] - destino[1]) == 1 and pieza_destino is not None and pieza_destino.color != self.color) #casilla en diagonal
+                #para la diagonal, el peón se mueve una casilla adelante, una casilla an la columna(derecha o izquerda) y en la csilla de destino debe haver una pieza enemiga
+        return (avanzar_uno or avanzar_dos or avanzar_diagonal) and self.camino_libre(origen, destino, tablero)
 
 
 
@@ -137,7 +137,7 @@ class Rey(Pieza):
         super().__init__(color, simbolo)
 
 
-    def movimiento_valido(self, origen: tuple[int,int], destino: tuple[int,int]) -> bool:
+    def movimiento_valido(self, origen: tuple[int,int], destino: tuple[int,int], tablero=None) -> bool:
         return (abs(destino[0] - origen[0]) <= 1 and abs(destino[1] - origen[1]) <= 1) and (origen != destino) 
 
 
@@ -152,11 +152,13 @@ class Dama(Pieza):
         super().__init__(color, simbolo)
 
 
-    def movimento_valido(self, origen: tuple[int,int], destino: tuple[int,int], tablero) -> bool:
-        return (((origen [0] == destino [0]) != (origen [1] == destino [1])
-                and (origen != destino)) or (abs(destino[0] - origen[0]) == abs(destino[1] - origen[1])
-                and (origen != destino)) and self.camino_libre(origen, destino, tablero)
-                and self.camino_libre(origen, destino, tablero))
+    def movimiento_valido(self, origen: tuple[int,int], destino: tuple[int,int], tablero) -> bool:
+        if origen == destino:
+            return False
+        movimiento_recto = (origen [0] == destino [0]) != (origen [1] == destino [1]) 
+        movimiento_diagonal = abs(destino[0] - origen[0]) == abs(destino[1] - origen[1])
+        return (movimiento_recto or movimiento_diagonal) and self.camino_libre(origen, destino, tablero)
+                
        
 
 
@@ -195,7 +197,7 @@ class Tablero:
     
         letras_columna: str = "  "
         for columna in range(8):
-            letras_columna += f"{letras[columna]}"
+            letras_columna += f"{letras[columna]} "
         print(letras_columna)
 
         for fila in range(8): #filas
@@ -210,10 +212,10 @@ class Tablero:
 
 
     def coronar_peon(self, destino: tuple[int,int]) -> None:
-        pieza_actual = self.casillas(destino)
+        pieza_actual = self.casillas[destino[0]][destino[1]]
         color_peon = pieza_actual.color
 
-        convertir = input("Converitir en (opciones : torre, alfil, caballo o dama):").strip().lower() #siguiendo el input, se convierte el peon
+        convertir = input("Convertir en (opciones : torre, alfil, caballo o dama):").strip().lower() #siguiendo el input, se convierte el peon
         if convertir in ["dama", "reina"]:
             self.casillas[destino[0]][destino[1]] = Dama(color_peon)
         elif convertir == "torre":
@@ -221,9 +223,9 @@ class Tablero:
         elif convertir == "alfil":
             self.casillas[destino[0]][destino[1]] = Alfil(color_peon)
         elif convertir == "caballo":
-            self.casillas[destino[0]][destino[1]]
+            self.casillas[destino[0]][destino[1]] = Caballo(color_peon)
         else:
-            print("⚠ LA OPCIÓN NO SE HA RECONOCIDA, POR FAVOR INTRODUZCA UNA OPCIÓN VÁLIDA ⚠")  
+            print("⚠ LA OPCIÓN NO SE HA RECONOCIDO, POR FAVOR INTRODUZCA UNA OPCIÓN VÁLIDA ⚠")  
 
         print(f"---Coronación exitosa en {convertir}---") 
 
@@ -257,14 +259,14 @@ class Tablero:
 
         for fila in range(8): #recorremos el tablero en busca del rey
             for columna in range(8):
-                pieza = self.casillas
+                pieza = self.casillas[fila][columna]
                 if pieza is not None and type(pieza).__name__.lower() == "rey" and pieza.color == color_rey: #si la casilla no está vacía y es el rey
                     posicion_rey = (fila, columna) #guarda la coordenada en posicion_rey
                     break #terminamos el recorrido interno una vez encontrado el rey
-                if posicion_rey: #nos salimos del bucle interno
+            if posicion_rey: #nos salimos del bucle interno
                     break
-                if not posicion_rey: #en el caso de que n se encuentre
-                    return False
+        if not posicion_rey: #en el caso de que no se encuentre
+            return False
 
         for fila in range(8): #recorre el tablero por piezas enemigas
             for columna in range(8):
@@ -278,19 +280,19 @@ class Tablero:
 
 
     def jaque_mate(self, color_rey: str) -> bool:
-        if not self.jaque(color_rey): #primero compreobamos si está en jaque
+        if not self.jaque(color_rey): #primero comprobamos si está en jaque
             return False
 
         for fila_pieza in range(8): #recorremos el tablero en busca de una pieza cuyo movimiento salvara al rey
             for columna_pieza in range(8):
                 pieza = self.casillas[fila_pieza][columna_pieza]
-                if pieza is not None and pieza.color == color_rey: #es uan pieza del mismo bando que el rey
-                    for fila_pieza_movimiento in range(8): #comprobamos el moviemnto de esta pieza que lo salva 
+                if pieza is not None and pieza.color == color_rey: #es una pieza del mismo bando que el rey
+                    for fila_pieza_movimiento in range(8): #comprobamos el movimiento de esta pieza que lo salva 
                         for columna_pieza_movimiento in range(8): 
                             origen = (fila_pieza, columna_pieza)
                             destino = (fila_pieza_movimiento, columna_pieza_movimiento)
 
-                            if pieza.movimiento_valido(origen, destino, self): #verifivamos si la pieza piiede relizar ese movimiento
+                            if pieza.movimiento_valido(origen, destino, self): #verificamos si la pieza puede realizar ese movimiento
                                 pieza_destino = self.casillas[fila_pieza_movimiento][columna_pieza_movimiento] #simulamos el destino que haría la pieza,teniendo en cuenta la que podrá estar en la casilla de destino
                                 if pieza_destino is None or pieza_destino.color != color_rey: #comprobamos que no sea una pieza del mismo bando que el rey
                                     self.casillas[fila_pieza_movimiento][columna_pieza_movimiento] = pieza
@@ -312,7 +314,7 @@ class Tablero:
             print("⚠ LA CASILLA ESTÁ VACÍA, POR FAVOR SELECCIONE UNA CASILLA NO VACÍA DE TU COLOR ⚠")
             return False
         
-        pieza_destino = self.casillas[destino[0], destino[1]] #para que la casilla de destino no sea una no nemiga
+        pieza_destino = self.casillas[destino[0]][destino[1]] #para que la pieza en la casilla de destino no sea una no enemiga
         if pieza_destino is not None and pieza_destino.color == pieza.color:
             print("⚠ LA CASILLA DE DESTINO ESTÁ OCUPADA POR UNA PIEZA DE TU PROPIO COLOR, NO ES POSIBLE LA JUGADA ⚠")
             return False
@@ -324,13 +326,13 @@ class Tablero:
         if pieza_destino is not None:
             print("★ CAPTURA VICTORIOSA ★")
 
-        self.casillas[destino[0]],[destino[1]] = pieza
-        self.casillas[origen[0]],[origen[1]] = None
+        self.casillas[destino[0]][destino[1]] = pieza
+        self.casillas[origen[0]][origen[1]] = None
         
-        #después de colocarse la pieza, si es peón y llega al borde contario, se realiza la coronación
+        #después de colocarse la pieza, si es peón y llega al borde contrario, se realiza la coronación
         if type(pieza).__name__ == "Peon":
             if (pieza.color == "blanco" and destino[0] == 0) or (pieza.color == "negro" and destino[0] == 7):
-                print(" FELICIDADES, EL PEÓN SE CORONARÁ")
+                print("★ FELICIDADES, EL PEÓN SE CORONARÁ ★")
                 self.coronar_peon(destino)
 
         if pieza.color == "blanco": #mira el color de las piezas del turno
@@ -338,28 +340,28 @@ class Tablero:
         else:
             color_contrario = "blanco"
 
-        if self.jaque(color_contrario):
-            print("★ JAQUE ★")
-        elif self.jaque_mate(color_contrario):
+        if self.jaque_mate(color_contrario):
             print("★ JAQUE MATE, FIN DE LA PARTIDA ★")
             self.fin_por_jaque_mate = True #se activa el atributo
-            return True 
+        elif self.jaque(color_contrario):
+                        print("★ JAQUE ★")
+        return True 
 
 
-        return True
+    
                 
 
 
 #Se colocan las piezas
     def colocar_piezas_iniciales(self) -> None:
-        self.colocar(Torre("negra"), 0, 0)
+        self.colocar(Torre("negro"), 0, 0)
         self.colocar(Caballo("negro"), 0, 1)
         self.colocar(Alfil("negro"), 0, 2)
         self.colocar(Rey("negro"), 0, 3)
-        self.colocar(Dama("negra"),0 ,4)
+        self.colocar(Dama("negro"),0 ,4)
         self.colocar(Alfil("negro"),0 ,5)
         self.colocar(Caballo("negro"),0 ,6)
-        self.colocar(Torre("negra"),0 ,7)
+        self.colocar(Torre("negro"),0 ,7)
         self.colocar(Peon("negro"),1 ,0)
         self.colocar(Peon("negro"),1 ,1)
         self.colocar(Peon("negro"),1 ,2)
@@ -370,14 +372,14 @@ class Tablero:
         self.colocar(Peon("negro"),1 ,7)
 
 #Piezas blancas
-        self.colocar(Torre("blanca"), 7, 0)
+        self.colocar(Torre("blanco"), 7, 0)
         self.colocar(Caballo("blanco"), 7, 1)
         self.colocar(Alfil("blanco"), 7, 2)
         self.colocar(Rey("blanco"), 7, 3)
-        self.colocar(Dama("blanca"),7 ,4)
+        self.colocar(Dama("blanco"),7 ,4)
         self.colocar(Alfil("blanco"),7 ,5)
         self.colocar(Caballo("blanco"),7 ,6)
-        self.colocar(Torre("blanca"),7 ,7)
+        self.colocar(Torre("blanco"),7 ,7)
         self.colocar(Peon("blanco"),6 ,0)
         self.colocar(Peon("blanco"),6 ,1)
         self.colocar(Peon("blanco"),6 ,2)
@@ -417,8 +419,8 @@ def exportar_historial_csv(jugadas: list[str], ruta: str) -> None:
     with open(ruta, "w", newline = "", encoding = "utf-8") as fichero: #abre el fichero en modo escritura
         escritor = csv.writer(fichero) #se abre el escritor  csv
         escritor.writerow(["numero", "turno", "origen", "destino"]) #la cabecera de las líneas
-        for numero, mov in enumerate(jugadas, start = 1): #enumera el número de juagadas y las jugadas que se realizan
-            if numero % 2 == 1: #como simpre empiezan las blancas, son las jugadas impares
+        for numero, jugada in enumerate(jugadas, start = 1): #enumera el número de jugadas y las jugadas que se realizan
+            if numero % 2 == 1: #como siempre empiezan las blancas, son las jugadas impares
                 turno_str = "blancas" 
             else:
                 turno_str = "negras"
@@ -427,14 +429,14 @@ def exportar_historial_csv(jugadas: list[str], ruta: str) -> None:
             escritor.writerow([numero, turno_str, origen_str, destino_str]) #con los datos recogidos, se escriben
 
 
-def cargar_historial(ruta: str) -> list[str]: #recibe una ruta, por ejemplor partida.txt
+def cargar_historial(ruta: str) -> list[str]: #recibe una ruta, por ejemplo partida.txt
     jugadas: list[str] = [] #preparamos la lista vacía
     with open(ruta, "r", encoding = "utf-8") as fichero: #abre el fichero en modo lectura
-            for linea in fichero: #recorre el fichero linea a linea
+            for linea in fichero: #recorre el fichero línea a línea
                 depurado = linea.strip() #elimina saltos de linea (\n) para la variable depurado
                 if depurado: #si al eliminar el salto de línea, no es una jugada vacía
-                    jugadas.append(depurado) #las jugadas del fichero se añaden a juagadas
-            return jugadas #devulve las jugadas ya limpias
+                    jugadas.append(depurado) #las jugadas del fichero se añaden a jugadas
+            return jugadas #devuelve las jugadas ya limpias
 
 
 
@@ -457,7 +459,7 @@ estado: str = "blancas"
 def turno(tablero: "Tablero", jugadas: list[str], color_turno: str, estado: str, siguiente_turno: str) -> str: # en vez de duplicar el código, creamos una función que lo lleve
     tablero.imprimir()
     print(f"Turno de las {estado}")
-    print("---Puede introducir 'salir', 'guardar' o una jugada (origen destino) ej: 'a2 a3---")
+    print("---Puede introducir 'salir', 'guardar', 'exportar', o realizar una jugada (origen destino) ej: 'a2 a3---")
 
     eleccion = input ("→ ").strip().strip("'\"") #recibe con input
 
@@ -465,21 +467,23 @@ def turno(tablero: "Tablero", jugadas: list[str], color_turno: str, estado: str,
         print("---Se ha seleccionado salir---")
         return "fin_partida"
 
-    if eleccion.lower() == "guardar": #si la opción es guardar, se llama a la función para gaurdar el historial
+    if eleccion.lower() == "guardar": #si la opción es guardar, se llama a la función para guardar el historial
         guardar_historial(jugadas, "partida.txt")
         print("---Se ha seleccionado guardar---")
         return estado
 
-    troceado = eleccion.split() #si se introduce una jugada convierte por ejmplo de a2 a3 a "a2" "a3"
+    if eleccion.lower() == "exportar":
+        exportar_historial_csv(jugadas, "partida.csv")
+        print("---Se ha seleccionado exportar---")
+        return estado
+
+    troceado = eleccion.split() #si se introduce una jugada convierte por ejemplo de a2 a3 a "a2" "a3"
     if len(troceado) != 2: #verificar si no es de 2
         print("⚠ INTRODUZCA EL ORIGEN Y DESTINO CON UN ESPACIO , EJ: 'a2 a3' ⚠")
-        if color_turno == "blanco":
-            return "blancas"
-        else:
-            return "negras"
+        return estado
         
-    origen = tablero.convertir_letra(troceado[0]) #correspondría por ejmplo a "a2"
-    destino = tablero.convertir_letra(troceado[1]) #correspondría por ejmplo a "a3"
+    origen = tablero.convertir_letra(troceado[0]) #correspondría por ejemplo a "a2"
+    destino = tablero.convertir_letra(troceado[1]) #correspondría por ejemplo a "a3"
     if origen is None or destino is None:
         print("⚠ LA COORDENADA NO ES VÁLIDA , POR FAVOR INTRODUZCA UNA COORDENADA VÁLIDA ⚠")
         return estado #seguimos en el mismo estado 
@@ -487,6 +491,7 @@ def turno(tablero: "Tablero", jugadas: list[str], color_turno: str, estado: str,
     pieza = tablero.obtener(origen[0], origen[1])
     if pieza is not None and pieza.color != color_turno: #mira que no se seleccione una pieza del enemigo
        print("⚠ NO PUEDE MOVER UNA PIEZA ENEMIGA, POR FAVOR SELECCIONE UNA PIEZA DE SU TURNO ⚠")
+       return estado
 
     if tablero.mover(origen, destino):
         jugadas.append(f"{troceado[0]} {troceado[1]}")
@@ -502,21 +507,19 @@ def turno(tablero: "Tablero", jugadas: list[str], color_turno: str, estado: str,
 
 
 
- #En este punto comenzaría la partida, se imrpime el tablero y comienza la partida
+ #En este punto comenzaría la partida, se imprime el tablero y comienza la partida si no se retoma ninguna partida
 
 
-
-
-tablero = Tablero() #se crea el tablero, se colocan las piezas iniciales, se deja comenzaso la lista donde se guardarán las jugadsa y comienzan las blancas
-tablero.colocar_piezas_iniciales
+tablero = Tablero() #se crea el tablero, se colocan las piezas iniciales, se comienza la lista donde se guardarán las jugadas y comienzan las blancas
+tablero.colocar_piezas_iniciales()
 jugadas: list[str] = []
 estado = "blancas"
 
 if os.path.exists("partida.txt"): #si existe un fichero anterior, se pregunta si se quiere retomar
-    respuesta = input("---Existe una partida anterior, ¿Se desea exportarla? (introduzca s ,para retomarla)---")
+    respuesta = input("---Existe una partida anterior, ¿Se desea retomarla? (introduzca s ,para retomarla)---").strip().lower()
     if respuesta == "s": 
-        historial_cargado = cargar_historial("partida.txt") #si se respone que se quiere retomar, se carga la partida
-        tablero_prueba = Tablero() # se simula una tablero, se ponen las piezas iniciales
+        historial_cargado = cargar_historial("partida.txt") #si se responde que se quiere retomar, se carga la partida
+        tablero_prueba = Tablero() # se simula un tablero, se ponen las piezas iniciales
         tablero_prueba.colocar_piezas_iniciales()
         valido = True
         for jugada in historial_cargado: #recorre cada jugada 
@@ -524,7 +527,7 @@ if os.path.exists("partida.txt"): #si existe un fichero anterior, se pregunta si
             if len(troceado) != 2: #si no está compuesto de dos partes
                 valido = False
                 break
-            origen = tablero_prueba.convertir_letra(troceado[0]) #del caso contrario, las concierte en coordenadas
+            origen = tablero_prueba.convertir_letra(troceado[0]) #del caso contrario, las convierte en coordenadas
             destino = tablero_prueba.convertir_letra(troceado[1])
             if origen is None or destino is None or not tablero_prueba.mover(origen, destino): #si no hay origen, destino y al aplicar las jugadas en el tablero de prueba ocurre un error
                 valido = False
@@ -533,11 +536,11 @@ if os.path.exists("partida.txt"): #si existe un fichero anterior, se pregunta si
         if not valido: #si no devuelve True
             print("⚠ EL ARCHIVO NO ES VALIDO ⚠")
         elif tablero_prueba.fin_por_jaque_mate:
-            print("---La partida gaurdada ya había termiando. Se empieza una partida nueva---")
-        else: #
+            print("---La partida guardada ya había terminado. Se empieza una partida nueva---")
+        else: 
             tablero = tablero_prueba
             jugadas = historial_cargado
-            if len(jugadas) % 2 == 1: #para retomar el turno, si hay por ejemplor 3 (impar) jugadas = blnacas, negras, blancas. Le correspondrían a las negras 
+            if len(jugadas) % 2 == 1: #para retomar el turno, si hay por ejemplo 3 (impar) jugadas = blancas, negras, blancas. Le correspondrían a las negras 
                 estado = "negras"
             else:
                 estado = "blancas"
@@ -546,7 +549,7 @@ if os.path.exists("partida.txt"): #si existe un fichero anterior, se pregunta si
 
 while estado  != "fin_partida":
     if estado == "blancas":
-        estado = turno(tablero, jugadas, "blanco", "blancas", "negras") #aquí están los cuatro atributos que definimos para la función 
+        estado = turno(tablero, jugadas, "blanco", "blancas", "negras") #aquí están los cinco atributos que definimos de la función turno
     elif estado == "negras":
-        estaddo = turno(tablero, jugadas, "negro", "negras", "blancas")
+        estado = turno(tablero, jugadas, "negro", "negras", "blancas")
 
